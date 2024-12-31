@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0A2AFE542D242AD200789A78 /* AIProxy in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2AFE532D242AD200789A78 /* AIProxy */; };
+		0A2AFE592D242E0600789A78 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2AFE582D242E0600789A78 /* OpenAI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0A2AFE2A2D24235700789A78 /* FitVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A2AFE592D242E0600789A78 /* OpenAI in Frameworks */,
+				0A2AFE542D242AD200789A78 /* AIProxy in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = FitVision;
 			packageProductDependencies = (
+				0A2AFE532D242AD200789A78 /* AIProxy */,
+				0A2AFE582D242E0600789A78 /* OpenAI */,
 			);
 			productName = FitVision;
 			productReference = 0A2AFE2A2D24235700789A78 /* FitVision.app */;
@@ -94,6 +103,10 @@
 			);
 			mainGroup = 0A2AFE212D24235700789A78;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0A2AFE522D242AD200789A78 /* XCRemoteSwiftPackageReference "AIProxySwift" */,
+				0A2AFE572D242E0600789A78 /* XCRemoteSwiftPackageReference "OpenAI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0A2AFE2B2D24235700789A78 /* Products */;
 			projectDirPath = "";
@@ -330,6 +343,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0A2AFE522D242AD200789A78 /* XCRemoteSwiftPackageReference "AIProxySwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lzell/AIProxySwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.42.1;
+			};
+		};
+		0A2AFE572D242E0600789A78 /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MacPaw/OpenAI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A2AFE532D242AD200789A78 /* AIProxy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2AFE522D242AD200789A78 /* XCRemoteSwiftPackageReference "AIProxySwift" */;
+			productName = AIProxy;
+		};
+		0A2AFE582D242E0600789A78 /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2AFE572D242E0600789A78 /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0A2AFE222D24235700789A78 /* Project object */;
 }

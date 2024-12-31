@@ -1,10 +1,11 @@
-// Create a new file called OpenAIManager.swift
 import Foundation
-import OpenAI
+import AIProxy
 
 class OpenAIManager: ObservableObject {
     @Published var isLoading = false
-    private var client: OpenAI?
+    @Published var response: String = ""
+
+    private var openAIService: OpenAIService?
 
     func configureClient(baseURL: String) {
         guard let apiKey = ProcessInfo.processInfo.environment["OPENAI_API_KEY"] else {
@@ -12,28 +13,45 @@ class OpenAIManager: ObservableObject {
             return
         }
 
-        var configuration = OpenAI.Configuration(apiKey: apiKey)
-        if !baseURL.isEmpty {
-            configuration.baseURL = baseURL
-        }
+        configure(directAPIKey: apiKey, partialKey: nil, serviceURL: baseURL)
+    }
 
-        client = OpenAI(configuration: configuration)
+    func configure(directAPIKey: String? = nil, partialKey: String? = nil, serviceURL: String? = nil) {
+        if let apiKey = directAPIKey {
+            openAIService = AIProxy.openAIDirectService(unprotectedAPIKey: apiKey)
+        } else if let partialKey = partialKey, let serviceURL = serviceURL {
+            openAIService = AIProxy.openAIService(partialKey: partialKey, serviceURL: serviceURL)
+        }
     }
 
     func analyzeHealthData(_ healthData: String, modelName: String) async throws -> String {
-        guard let client = client else {
-            throw NSError(domain: "OpenAIManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "OpenAI client not configured"])
+        guard let service = openAIService else {
+            throw NSError(domain: "OpenAIManager", code: -1,
+                         userInfo: [NSLocalizedDescriptionKey: "OpenAI service not configured"])
         }
 
         isLoading = true
         defer { isLoading = false }
 
-        let query = ChatQuery(model: .init(modelName), messages: [
-            .init(role: .system, content: "You are a health and fitness expert."),
-            .init(role: .user, content: "Please analyze this health data and provide insights: \n\n\(healthData)")
-        ])
+        do {
+            let requestBody = OpenAIChatCompletionRequestBody(
+                model: modelName,
+                messages: [
+                    .system(content: .text("You are a health and fitness expert.")),
+                    .user(content: .text("Please analyze this health data and provide insights: \n\n\(healthData)"))
+                ],
+                temperature: 0.7
+            )
 
-        let response = try await client.chats(query: query)
-        return response.choices.first?.message.content ?? "No analysis available"
+            let response = try await service.chatCompletionRequest(body: requestBody)
+
+            return response.choices.first?.message.content ?? "No analysis available"
+        } catch AIProxyError.unsuccessfulRequest(let statusCode, let responseBody) {
+            throw NSError(domain: "OpenAIManager", code: Int(statusCode),
+                         userInfo: [NSLocalizedDescriptionKey: "API Error: \(responseBody)"])
+        } catch {
+            throw NSError(domain: "OpenAIManager", code: -2,
+                         userInfo: [NSLocalizedDescriptionKey: "Could not create chat completion: \(error.localizedDescription)"])
+        }
     }
 }

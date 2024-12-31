@@ -13,7 +13,10 @@ struct ContentView: View {
     @State private var healthData: String = "No health data available"
     @State private var showAlert = false
     @State private var showSettings = false
+    @State private var analysisResult: String = ""
+    @AppStorage("modelName") private var modelName = "gpt-4"
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject private var openAIManager: OpenAIManager
 
     var body: some View {
         NavigationView {
@@ -55,8 +58,10 @@ struct ContentView: View {
                         }
 
                         Button(action: {
-                            UIPasteboard.general.string = healthData
-                            showAlert = true
+                            Task {
+                                UIPasteboard.general.string = healthData
+                               //  await analyzeAndCopyHealthData()
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "doc.on.doc.fill")
@@ -68,6 +73,26 @@ struct ContentView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                         }
+                    }
+
+                    if !analysisResult.isEmpty {
+                        // Analysis Card
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack {
+                                Image(systemName: "brain.head.profile")
+                                    .foregroundColor(.purple)
+                                Text("AI Analysis")
+                                    .font(.headline)
+                                Spacer()
+                            }
+
+                            Text(analysisResult)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
+                        .cornerRadius(16)
                     }
 
                     // Info Card
@@ -104,7 +129,7 @@ struct ContentView: View {
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("Copied!"),
-                message: Text("Health data copied to clipboard"),
+                message: Text("Health data copied to clipboard and analyzed"),
                 dismissButton: .default(Text("OK"))
             )
         }
@@ -314,5 +339,15 @@ struct ContentView: View {
         default:
             return "Other"
         }
+    }
+
+    private func analyzeAndCopyHealthData() async {
+        UIPasteboard.general.string = healthData
+        do {
+            analysisResult = try await openAIManager.analyzeHealthData(healthData, modelName: modelName)
+        } catch {
+            analysisResult = "Analysis failed: \(error.localizedDescription)"
+        }
+        showAlert = true
     }
 }

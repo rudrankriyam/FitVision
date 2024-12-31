@@ -11,18 +11,24 @@ import HealthKit
 @main
 struct FitVisionApp: App {
     // Initialize HealthKit store
-    private var healthStore: HKHealthStore?
+    let healthStore = HKHealthStore()
 
-    init() {
-        // Check if HealthKit is available on this device
-        if HKHealthStore.isHealthDataAvailable() {
-            healthStore = HKHealthStore()
+    @StateObject private var openAIManager: OpenAIManager = {
+        let manager = OpenAIManager()
+        // Try to get API key from keychain
+        do {
+            let apiKey = try KeychainManager.shared.getAPIKey()
+            manager.configure(directAPIKey: apiKey)
+        } catch {
+            print("No API key found in keychain, waiting for user input")
         }
-    }
+        return manager
+    }()
 
     var body: some Scene {
         WindowGroup {
             ContentView(healthStore: healthStore)
+                .environmentObject(openAIManager)
         }
     }
 }
