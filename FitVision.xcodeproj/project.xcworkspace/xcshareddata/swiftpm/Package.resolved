@@ -1,0 +1,24 @@
+{
+  "originHash" : "848d240fcb7dadd380583bcef53e9e17acf379d7ca695af046fe100df9d39858",
+  "pins" : [
+    {
+      "identity" : "aiproxyswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lzell/AIProxySwift.git",
+      "state" : {
+        "revision" : "a71eac7de6e1f9a80a0ba659a66bec7db9196bd6",
+        "version" : "0.49.0"
+      }
+    },
+    {
+      "identity" : "openai",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MacPaw/OpenAI.git",
+      "state" : {
+        "revision" : "843e087929aa806adb611dbca93f9a4a7f28be04",
+        "version" : "0.3.0"
+      }
+    }
+  ],
+  "version" : 3
+}
