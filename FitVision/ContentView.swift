@@ -12,6 +12,7 @@ struct ContentView: View {
     let healthStore: HKHealthStore?
     @State private var healthData: String = "No health data available"
     @State private var showAlert = false
+    @State private var showSettings = false
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
@@ -90,7 +91,15 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle("FitVision")
+            .navigationBarItems(trailing: Button(action: {
+                showSettings = true
+            }) {
+                Image(systemName: "gear")
+            })
             .background(Color(uiColor: .systemGroupedBackground))
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
         .alert(isPresented: $showAlert) {
             Alert(
